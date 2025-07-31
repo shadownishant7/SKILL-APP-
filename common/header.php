@@ -1,13 +1,21 @@
-<?php require_once 'config.php'; ?>
+<?php require_once 'config.php'; 
+$settings = getSettings();
+$app_name = $settings['app_name'] ?? 'Skills With Nishant';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skills With Nishant</title>
+    <title><?php echo htmlspecialchars($app_name); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Theme color: #0284C7 */
+        .theme-bg { background-color: #0284C7; }
+        .theme-text { color: #0284C7; }
+        .theme-border { border-color: #0284C7; }
+        
         /* Disable right-click and text selection */
         body {
             -webkit-user-select: none;
@@ -41,18 +49,18 @@
 </head>
 <body class="bg-gray-50">
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+    <header class="theme-bg text-white shadow-sm fixed top-0 left-0 right-0 z-50">
         <div class="flex items-center justify-between px-4 py-3">
             <!-- Menu Icon -->
-            <button id="menuBtn" class="text-gray-600 hover:text-gray-800">
+            <button id="menuBtn" class="text-white hover:text-gray-200">
                 <i class="fas fa-bars text-xl"></i>
             </button>
             
             <!-- App Name -->
-            <h1 class="text-lg font-bold text-gray-800">Skills With Nishant</h1>
+            <h1 class="text-lg font-bold text-white"><?php echo htmlspecialchars($app_name); ?></h1>
             
             <!-- Profile Icon -->
-            <a href="profile.php" class="text-gray-600 hover:text-gray-800">
+            <a href="profile.php" class="text-white hover:text-gray-200">
                 <i class="fas fa-user-circle text-xl"></i>
             </a>
         </div>

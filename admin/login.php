@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error = 'Please fill in all fields';
     } else {
         // Check admin credentials
-        $query = "SELECT * FROM admins WHERE username = ?";
+        $query = "SELECT * FROM admin WHERE username = ?";
         $stmt = $conn->prepare($query);
         $stmt->bind_param("s", $username);
         $stmt->execute();
@@ -37,16 +37,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 }
+
+$settings = getSettings();
+$app_name = $settings['app_name'] ?? 'Skills With Nishant';
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Login - Skills With Nishant</title>
+    <title>Admin Login - <?php echo htmlspecialchars($app_name); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        .theme-bg { background-color: #0284C7; }
+        .theme-text { color: #0284C7; }
+        .theme-border { border-color: #0284C7; }
+        
         body {
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -61,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <!-- Logo/Header -->
             <div class="text-center mb-8">
                 <h1 class="text-3xl font-bold text-gray-800 mb-2">Admin Panel</h1>
-                <p class="text-gray-600">Skills With Nishant</p>
+                <p class="text-gray-600"><?php echo htmlspecialchars($app_name); ?></p>
             </div>
 
             <!-- Login Form -->
@@ -85,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         <input type="password" name="password" required 
                                class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
-                    <button type="submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
+                    <button type="submit" class="w-full theme-bg text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
                         Login
                     </button>
                 </form>

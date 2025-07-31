@@ -47,10 +47,12 @@ if ($purchase_result->num_rows > 0) {
     exit;
 }
 
-// Create Razorpay order
-$razorpay_key_id = 'rzp_test_YOUR_KEY_ID'; // Replace with your test key
-$razorpay_key_secret = 'YOUR_SECRET_KEY'; // Replace with your test secret
+// Get Razorpay keys from settings
+$settings = getSettings();
+$razorpay_key_id = $settings['razorpay_key'] ?? 'rzp_test_YOUR_KEY_ID';
+$razorpay_key_secret = $settings['razorpay_secret'] ?? 'YOUR_SECRET_KEY';
 
+// Create Razorpay order
 $order_data = [
     'receipt' => 'order_' . time(),
     'amount' => $amount * 100, // Convert to paise

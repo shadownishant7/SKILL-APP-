@@ -18,6 +18,14 @@ if ($conn->connect_error) {
 // Set charset to utf8
 $conn->set_charset("utf8");
 
+// Get settings
+$settings = [];
+$settings_query = "SELECT * FROM settings LIMIT 1";
+$settings_result = $conn->query($settings_query);
+if ($settings_result && $settings_result->num_rows > 0) {
+    $settings = $settings_result->fetch_assoc();
+}
+
 // Helper functions
 function sanitize($data) {
     global $conn;
@@ -49,5 +57,12 @@ function getCurrentUser() {
         return $result->fetch_assoc();
     }
     return null;
+}
+
+function getSettings() {
+    global $conn;
+    $query = "SELECT * FROM settings LIMIT 1";
+    $result = $conn->query($query);
+    return $result->fetch_assoc();
 }
 ?>

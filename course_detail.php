@@ -8,10 +8,7 @@ if (!$course_id) {
 }
 
 // Get course details
-$query = "SELECT c.*, cat.name as category_name 
-          FROM courses c 
-          LEFT JOIN categories cat ON c.category_id = cat.id 
-          WHERE c.id = ?";
+$query = "SELECT * FROM courses WHERE id = ?";
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $course_id);
 $stmt->execute();
@@ -58,13 +55,12 @@ $video_count = $videos_result->fetch_assoc()['video_count'];
 <!-- Course Header -->
 <div class="mb-6">
     <div class="relative">
-        <img src="<?php echo $course['thumbnail'] ?: 'https://via.placeholder.com/800x400/4F46E5/FFFFFF?text=Course'; ?>" 
+        <img src="<?php echo $course['image'] ?: 'https://via.placeholder.com/800x400/0284C7/FFFFFF?text=Course'; ?>" 
              alt="<?php echo htmlspecialchars($course['title']); ?>"
              class="w-full h-64 object-cover rounded-lg">
         <div class="absolute inset-0 bg-black bg-opacity-40 rounded-lg"></div>
         <div class="absolute bottom-4 left-4 right-4">
             <h1 class="text-2xl font-bold text-white mb-2"><?php echo htmlspecialchars($course['title']); ?></h1>
-            <p class="text-white text-sm opacity-90"><?php echo htmlspecialchars($course['category_name']); ?></p>
         </div>
     </div>
 </div>
@@ -149,7 +145,7 @@ $video_count = $videos_result->fetch_assoc()['video_count'];
     <h3 class="text-lg font-semibold text-gray-800 mb-4">Course Content</h3>
     
     <?php
-    $chapters_query = "SELECT * FROM chapters WHERE course_id = ? ORDER BY sort_order ASC, id ASC";
+    $chapters_query = "SELECT * FROM chapters WHERE course_id = ? ORDER BY id ASC";
     $chapters_stmt = $conn->prepare($chapters_query);
     $chapters_stmt->bind_param("i", $course_id);
     $chapters_stmt->execute();
@@ -179,7 +175,7 @@ $video_count = $videos_result->fetch_assoc()['video_count'];
                 
                 <?php if ($is_purchased): ?>
                     <?php
-                    $videos_query = "SELECT * FROM videos WHERE chapter_id = ? ORDER BY sort_order ASC, id ASC LIMIT 3";
+                    $videos_query = "SELECT * FROM videos WHERE chapter_id = ? ORDER BY id ASC LIMIT 3";
                     $videos_stmt = $conn->prepare($videos_query);
                     $videos_stmt->bind_param("i", $chapter['id']);
                     $videos_stmt->execute();
@@ -190,9 +186,6 @@ $video_count = $videos_result->fetch_assoc()['video_count'];
                             <div class="flex items-center text-sm text-gray-600">
                                 <i class="fas fa-play-circle text-gray-400 mr-2"></i>
                                 <span><?php echo htmlspecialchars($video['title']); ?></span>
-                                <?php if ($video['duration']): ?>
-                                    <span class="ml-auto text-xs text-gray-500"><?php echo $video['duration']; ?></span>
-                                <?php endif; ?>
                             </div>
                         <?php endwhile; ?>
                         <?php if ($chapter_video_count > 3): ?>

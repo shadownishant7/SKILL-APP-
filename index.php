@@ -2,16 +2,15 @@
 require_once 'common/config.php';
 
 // Get banners
-$banners_query = "SELECT * FROM banners ORDER BY sort_order ASC, id DESC";
+$banners_query = "SELECT * FROM banners ORDER BY id DESC";
 $banners_result = $conn->query($banners_query);
 
 // Get latest courses
-$courses_query = "SELECT c.*, cat.name as category_name 
-                 FROM courses c 
-                 LEFT JOIN categories cat ON c.category_id = cat.id 
-                 ORDER BY c.created_at DESC 
-                 LIMIT 10";
+$courses_query = "SELECT * FROM courses ORDER BY created_at DESC LIMIT 10";
 $courses_result = $conn->query($courses_query);
+
+$settings = getSettings();
+$app_name = $settings['app_name'] ?? 'Skills With Nishant';
 ?>
 
 <?php include 'common/header.php'; ?>
@@ -66,7 +65,7 @@ $courses_result = $conn->query($courses_query);
                     <a href="course_detail.php?id=<?php echo $course['id']; ?>" class="block">
                         <div class="bg-white rounded-lg shadow-md overflow-hidden">
                             <div class="aspect-w-16 aspect-h-9">
-                                <img src="<?php echo $course['thumbnail'] ?: 'https://via.placeholder.com/300x200/4F46E5/FFFFFF?text=Course'; ?>" 
+                                <img src="<?php echo $course['image'] ?: 'https://via.placeholder.com/300x200/0284C7/FFFFFF?text=Course'; ?>" 
                                      alt="<?php echo htmlspecialchars($course['title']); ?>"
                                      class="w-full h-32 object-cover">
                             </div>
@@ -74,7 +73,6 @@ $courses_result = $conn->query($courses_query);
                                 <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2">
                                     <?php echo htmlspecialchars($course['title']); ?>
                                 </h3>
-                                <p class="text-sm text-gray-600 mb-2"><?php echo htmlspecialchars($course['category_name']); ?></p>
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center space-x-2">
                                         <span class="text-lg font-bold text-blue-600">₹<?php echo $course['price']; ?></span>
@@ -96,20 +94,44 @@ $courses_result = $conn->query($courses_query);
     </div>
 </div>
 
-<!-- Categories -->
+<!-- Top Courses Grid -->
 <div class="mb-8">
-    <h2 class="text-xl font-bold text-gray-800 mb-4">Categories</h2>
-    <div class="grid grid-cols-2 gap-4">
-        <?php
-        $categories_query = "SELECT * FROM categories ORDER BY name";
-        $categories_result = $conn->query($categories_query);
-        while ($category = $categories_result->fetch_assoc()):
+    <h2 class="text-xl font-bold text-gray-800 mb-4">Top Courses</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <?php 
+        $top_courses_query = "SELECT * FROM courses ORDER BY id DESC LIMIT 6";
+        $top_courses_result = $conn->query($top_courses_query);
+        while ($course = $top_courses_result->fetch_assoc()): 
         ?>
-            <a href="course.php?category=<?php echo $category['id']; ?>" 
-               class="bg-white p-4 rounded-lg shadow-md text-center hover:shadow-lg transition-shadow">
-                <i class="fas fa-book text-2xl text-blue-600 mb-2"></i>
-                <h3 class="font-medium text-gray-800"><?php echo htmlspecialchars($category['name']); ?></h3>
-            </a>
+            <div class="bg-white rounded-lg shadow-md overflow-hidden">
+                <a href="course_detail.php?id=<?php echo $course['id']; ?>" class="block">
+                    <div class="aspect-w-16 aspect-h-9">
+                        <img src="<?php echo $course['image'] ?: 'https://via.placeholder.com/300x200/0284C7/FFFFFF?text=Course'; ?>" 
+                             alt="<?php echo htmlspecialchars($course['title']); ?>"
+                             class="w-full h-48 object-cover">
+                    </div>
+                    <div class="p-4">
+                        <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2">
+                            <?php echo htmlspecialchars($course['title']); ?>
+                        </h3>
+                        <p class="text-sm text-gray-600 mb-3 line-clamp-2">
+                            <?php echo htmlspecialchars(substr($course['description'], 0, 100)) . (strlen($course['description']) > 100 ? '...' : ''); ?>
+                        </p>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-2">
+                                <span class="text-lg font-bold text-blue-600">₹<?php echo $course['price']; ?></span>
+                                <span class="text-sm text-gray-500 line-through">₹<?php echo $course['mrp']; ?></span>
+                            </div>
+                            <span class="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">
+                                <?php 
+                                $discount = round((($course['mrp'] - $course['price']) / $course['mrp']) * 100);
+                                echo $discount . '% OFF';
+                                ?>
+                            </span>
+                        </div>
+                    </div>
+                </a>
+            </div>
         <?php endwhile; ?>
     </div>
 </div>
@@ -120,7 +142,7 @@ $courses_result = $conn->query($courses_query);
     <div class="flex items-center">
         <i class="fas fa-info-circle text-blue-600 text-xl mr-3"></i>
         <div>
-            <h3 class="font-semibold text-blue-800 mb-1">Welcome to Skills With Nishant!</h3>
+            <h3 class="font-semibold text-blue-800 mb-1">Welcome to <?php echo htmlspecialchars($app_name); ?>!</h3>
             <p class="text-blue-700 text-sm">Login to access your courses and track your progress.</p>
         </div>
     </div>
@@ -182,5 +204,14 @@ searchInput.addEventListener('input', function() {
     }
 });
 </script>
+
+<style>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+</style>
 
 <?php include 'common/bottom.php'; ?>

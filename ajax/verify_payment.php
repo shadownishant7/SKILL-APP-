@@ -20,8 +20,12 @@ if (!$razorpay_order_id || !$razorpay_payment_id || !$razorpay_signature || !$co
     exit;
 }
 
+// Get Razorpay keys from settings
+$settings = getSettings();
+$razorpay_key_id = $settings['razorpay_key'] ?? 'rzp_test_YOUR_KEY_ID';
+$razorpay_key_secret = $settings['razorpay_secret'] ?? 'YOUR_SECRET_KEY';
+
 // Verify signature
-$razorpay_key_secret = 'YOUR_SECRET_KEY'; // Replace with your test secret
 $expected_signature = hash_hmac('sha256', $razorpay_order_id . '|' . $razorpay_payment_id, $razorpay_key_secret);
 
 if ($expected_signature !== $razorpay_signature) {
@@ -30,8 +34,6 @@ if ($expected_signature !== $razorpay_signature) {
 }
 
 // Verify payment with Razorpay
-$razorpay_key_id = 'rzp_test_YOUR_KEY_ID'; // Replace with your test key
-
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, 'https://api.razorpay.com/v1/payments/' . $razorpay_payment_id);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -57,9 +59,9 @@ if ($payment_data['status'] !== 'captured') {
 }
 
 // Update order status
-$update_query = "UPDATE orders SET status = 'completed', razorpay_payment_id = ? WHERE user_id = ? AND course_id = ? AND razorpay_order_id = ?";
+$update_query = "UPDATE orders SET status = 'completed' WHERE user_id = ? AND course_id = ? AND razorpay_order_id = ?";
 $update_stmt = $conn->prepare($update_query);
-$update_stmt->bind_param("siis", $razorpay_payment_id, $_SESSION['user_id'], $course_id, $razorpay_order_id);
+$update_stmt->bind_param("iis", $_SESSION['user_id'], $course_id, $razorpay_order_id);
 
 if ($update_stmt->execute()) {
     echo json_encode(['success' => true, 'message' => 'Payment verified successfully']);

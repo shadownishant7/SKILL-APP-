@@ -37,7 +37,7 @@ if ($purchase_result->num_rows === 0) {
 }
 
 // Get chapters and videos
-$chapters_query = "SELECT * FROM chapters WHERE course_id = ? ORDER BY sort_order ASC, id ASC";
+$chapters_query = "SELECT * FROM chapters WHERE course_id = ? ORDER BY id ASC";
 $chapters_stmt = $conn->prepare($chapters_query);
 $chapters_stmt->bind_param("i", $course_id);
 $chapters_stmt->execute();
@@ -48,7 +48,7 @@ $first_video_query = "SELECT v.*, ch.title as chapter_title
                       FROM videos v 
                       JOIN chapters ch ON v.chapter_id = ch.id 
                       WHERE ch.course_id = ? 
-                      ORDER BY ch.sort_order ASC, ch.id ASC, v.sort_order ASC, v.id ASC 
+                      ORDER BY ch.id ASC, v.id ASC 
                       LIMIT 1";
 $first_video_stmt = $conn->prepare($first_video_query);
 $first_video_stmt->bind_param("i", $course_id);
@@ -80,7 +80,7 @@ $first_video = $first_video_result->fetch_assoc();
             <div id="videoPlayer" class="relative w-full" style="aspect-ratio: 16/9;">
                 <?php if ($first_video): ?>
                     <video id="video" controls class="w-full h-full" controlsList="nodownload" oncontextmenu="return false;">
-                        <source src="<?php echo $first_video['video_path']; ?>" type="video/mp4">
+                        <source src="uploads/videos/<?php echo $first_video['filename']; ?>" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
                 <?php else: ?>
@@ -103,12 +103,6 @@ $first_video = $first_video_result->fetch_assoc();
                 <p id="chapterTitle" class="text-sm text-gray-600 mb-2">
                     <?php echo htmlspecialchars($first_video['chapter_title']); ?>
                 </p>
-                <?php if ($first_video['duration']): ?>
-                    <p class="text-sm text-gray-500">
-                        <i class="fas fa-clock mr-1"></i>
-                        Duration: <?php echo $first_video['duration']; ?>
-                    </p>
-                <?php endif; ?>
             </div>
         <?php endif; ?>
     </div>
@@ -138,7 +132,7 @@ $first_video = $first_video_result->fetch_assoc();
                         
                         <div class="chapter-videos hidden">
                             <?php
-                            $videos_query = "SELECT * FROM videos WHERE chapter_id = ? ORDER BY sort_order ASC, id ASC";
+                            $videos_query = "SELECT * FROM videos WHERE chapter_id = ? ORDER BY id ASC";
                             $videos_stmt = $conn->prepare($videos_query);
                             $videos_stmt->bind_param("i", $chapter['id']);
                             $videos_stmt->execute();
@@ -149,17 +143,13 @@ $first_video = $first_video_result->fetch_assoc();
                                 <?php while ($video = $videos_result->fetch_assoc()): ?>
                                     <div class="video-item cursor-pointer p-2 rounded hover:bg-gray-100 transition-colors" 
                                          data-video-id="<?php echo $video['id']; ?>"
-                                         data-video-path="<?php echo $video['video_path']; ?>"
+                                         data-video-filename="<?php echo $video['filename']; ?>"
                                          data-video-title="<?php echo htmlspecialchars($video['title']); ?>"
-                                         data-chapter-title="<?php echo htmlspecialchars($chapter['title']); ?>"
-                                         data-video-duration="<?php echo $video['duration']; ?>">
+                                         data-chapter-title="<?php echo htmlspecialchars($chapter['title']); ?>">
                                         <div class="flex items-center">
                                             <i class="fas fa-play-circle text-blue-600 mr-2"></i>
                                             <div class="flex-1">
                                                 <p class="text-sm text-gray-800"><?php echo htmlspecialchars($video['title']); ?></p>
-                                                <?php if ($video['duration']): ?>
-                                                    <p class="text-xs text-gray-500"><?php echo $video['duration']; ?></p>
-                                                <?php endif; ?>
                                             </div>
                                         </div>
                                     </div>
@@ -191,18 +181,17 @@ document.querySelectorAll('.chapter-toggle').forEach(button => {
 document.querySelectorAll('.video-item').forEach(item => {
     item.addEventListener('click', function() {
         const videoId = this.dataset.videoId;
-        const videoPath = this.dataset.videoPath;
+        const videoFilename = this.dataset.videoFilename;
         const videoTitle = this.dataset.videoTitle;
         const chapterTitle = this.dataset.chapterTitle;
-        const videoDuration = this.dataset.videoDuration;
         
         // Update video player
         const video = document.getElementById('video');
         const videoTitleElement = document.getElementById('videoTitle');
         const chapterTitleElement = document.getElementById('chapterTitle');
         
-        if (video && videoPath) {
-            video.src = videoPath;
+        if (video && videoFilename) {
+            video.src = 'uploads/videos/' + videoFilename;
             video.load();
             video.play();
         }

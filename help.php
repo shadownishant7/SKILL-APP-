@@ -1,4 +1,9 @@
-<?php require_once 'common/config.php'; ?>
+<?php 
+require_once 'common/config.php';
+$settings = getSettings();
+$support_email = $settings['support_email'] ?? 'support@skillswithnishant.com';
+$support_phone = $settings['support_phone'] ?? '+91 98765 43210';
+?>
 
 <?php include 'common/header.php'; ?>
 
@@ -17,14 +22,14 @@
                 <i class="fas fa-envelope text-blue-600 mr-3 text-xl"></i>
                 <div>
                     <p class="font-medium text-gray-800">Email Support</p>
-                    <p class="text-gray-600">support@skillswithnishant.com</p>
+                    <p class="text-gray-600"><?php echo htmlspecialchars($support_email); ?></p>
                 </div>
             </div>
             <div class="flex items-center">
                 <i class="fas fa-phone text-blue-600 mr-3 text-xl"></i>
                 <div>
                     <p class="font-medium text-gray-800">Phone Support</p>
-                    <p class="text-gray-600">+91 98765 43210</p>
+                    <p class="text-gray-600"><?php echo htmlspecialchars($support_phone); ?></p>
                 </div>
             </div>
             <div class="flex items-center">

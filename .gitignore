@@ -23,10 +23,12 @@ tmp/
 temp/
 
 # Uploaded files (keep directory structure but ignore actual uploads)
+uploads/banners/*
+uploads/courses/*
 uploads/videos/*
-uploads/images/*
+!uploads/banners/.gitkeep
+!uploads/courses/.gitkeep
 !uploads/videos/.gitkeep
-!uploads/images/.gitkeep
 
 # Configuration files with sensitive data
 config.local.php

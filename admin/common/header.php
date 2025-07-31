@@ -1,13 +1,21 @@
-<?php require_once '../common/config.php'; ?>
+<?php require_once '../common/config.php'; 
+$settings = getSettings();
+$app_name = $settings['app_name'] ?? 'Skills With Nishant';
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel - Skills With Nishant</title>
+    <title>Admin Panel - <?php echo htmlspecialchars($app_name); ?></title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Theme color: #0284C7 */
+        .theme-bg { background-color: #0284C7; }
+        .theme-text { color: #0284C7; }
+        .theme-border { border-color: #0284C7; }
+        
         body {
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -18,20 +26,20 @@
 </head>
 <body class="bg-gray-50">
     <!-- Header -->
-    <header class="bg-white shadow-sm border-b border-gray-200 fixed top-0 left-0 right-0 z-50">
+    <header class="theme-bg text-white shadow-sm fixed top-0 left-0 right-0 z-50">
         <div class="flex items-center justify-between px-4 py-3">
             <!-- Menu Icon -->
-            <button id="menuBtn" class="text-gray-600 hover:text-gray-800">
+            <button id="menuBtn" class="text-white hover:text-gray-200">
                 <i class="fas fa-bars text-xl"></i>
             </button>
             
             <!-- App Name -->
-            <h1 class="text-lg font-bold text-gray-800">Admin Panel</h1>
+            <h1 class="text-lg font-bold text-white">Admin Panel</h1>
             
             <!-- Admin Info -->
             <div class="flex items-center space-x-3">
-                <span class="text-sm text-gray-600">Admin</span>
-                <a href="logout.php" class="text-red-600 hover:text-red-700">
+                <span class="text-sm text-white">Admin</span>
+                <a href="logout.php" class="text-red-300 hover:text-red-200">
                     <i class="fas fa-sign-out-alt text-xl"></i>
                 </a>
             </div>

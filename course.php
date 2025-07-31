@@ -2,7 +2,6 @@
 require_once 'common/config.php';
 
 // Get filters
-$category_filter = $_GET['category'] ?? '';
 $search_query = $_GET['search'] ?? '';
 $sort_by = $_GET['sort'] ?? 'latest';
 
@@ -11,14 +10,8 @@ $where_conditions = [];
 $params = [];
 $types = '';
 
-if ($category_filter) {
-    $where_conditions[] = "c.category_id = ?";
-    $params[] = $category_filter;
-    $types .= 'i';
-}
-
 if ($search_query) {
-    $where_conditions[] = "(c.title LIKE ? OR c.description LIKE ?)";
+    $where_conditions[] = "(title LIKE ? OR description LIKE ?)";
     $params[] = "%$search_query%";
     $params[] = "%$search_query%";
     $types .= 'ss';
@@ -28,17 +21,13 @@ $where_clause = !empty($where_conditions) ? 'WHERE ' . implode(' AND ', $where_c
 
 // Sort options
 $sort_clause = match($sort_by) {
-    'price_low' => 'ORDER BY c.price ASC',
-    'price_high' => 'ORDER BY c.price DESC',
-    'latest' => 'ORDER BY c.created_at DESC',
-    default => 'ORDER BY c.created_at DESC'
+    'price_low' => 'ORDER BY price ASC',
+    'price_high' => 'ORDER BY price DESC',
+    'latest' => 'ORDER BY created_at DESC',
+    default => 'ORDER BY created_at DESC'
 };
 
-$query = "SELECT c.*, cat.name as category_name 
-          FROM courses c 
-          LEFT JOIN categories cat ON c.category_id = cat.id 
-          $where_clause 
-          $sort_clause";
+$query = "SELECT * FROM courses $where_clause $sort_clause";
 
 $stmt = $conn->prepare($query);
 if (!empty($params)) {
@@ -46,10 +35,6 @@ if (!empty($params)) {
 }
 $stmt->execute();
 $courses_result = $stmt->get_result();
-
-// Get categories for filter
-$categories_query = "SELECT * FROM categories ORDER BY name";
-$categories_result = $conn->query($categories_query);
 ?>
 
 <?php include 'common/header.php'; ?>
@@ -66,20 +51,6 @@ $categories_result = $conn->query($categories_query);
         </div>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Category Filter -->
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                <select name="category" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <option value="">All Categories</option>
-                    <?php while ($category = $categories_result->fetch_assoc()): ?>
-                        <option value="<?php echo $category['id']; ?>" 
-                                <?php echo $category_filter == $category['id'] ? 'selected' : ''; ?>>
-                            <?php echo htmlspecialchars($category['name']); ?>
-                        </option>
-                    <?php endwhile; ?>
-                </select>
-            </div>
-            
             <!-- Sort -->
             <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">Sort By</label>
@@ -119,7 +90,7 @@ $categories_result = $conn->query($categories_query);
             <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                 <a href="course_detail.php?id=<?php echo $course['id']; ?>" class="block">
                     <div class="aspect-w-16 aspect-h-9">
-                        <img src="<?php echo $course['thumbnail'] ?: 'https://via.placeholder.com/300x200/4F46E5/FFFFFF?text=Course'; ?>" 
+                        <img src="<?php echo $course['image'] ?: 'https://via.placeholder.com/300x200/0284C7/FFFFFF?text=Course'; ?>" 
                              alt="<?php echo htmlspecialchars($course['title']); ?>"
                              class="w-full h-48 object-cover">
                     </div>
@@ -127,7 +98,6 @@ $categories_result = $conn->query($categories_query);
                         <h3 class="font-semibold text-gray-800 mb-2 line-clamp-2">
                             <?php echo htmlspecialchars($course['title']); ?>
                         </h3>
-                        <p class="text-sm text-gray-600 mb-2"><?php echo htmlspecialchars($course['category_name']); ?></p>
                         <p class="text-sm text-gray-700 mb-3 line-clamp-2">
                             <?php echo htmlspecialchars(substr($course['description'], 0, 100)) . (strlen($course['description']) > 100 ? '...' : ''); ?>
                         </p>
@@ -157,7 +127,7 @@ $categories_result = $conn->query($categories_query);
             <?php if ($search_query): ?>
                 No courses match your search for "<?php echo htmlspecialchars($search_query); ?>"
             <?php else: ?>
-                No courses available in this category
+                No courses available at the moment
             <?php endif; ?>
         </p>
         <a href="course.php" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-200">

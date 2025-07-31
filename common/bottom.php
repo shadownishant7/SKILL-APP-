@@ -2,27 +2,27 @@
     </main>
 
     <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50">
+    <nav class="theme-bg text-white border-t border-blue-600 fixed bottom-0 left-0 right-0 z-50">
         <div class="flex items-center justify-around py-2">
-            <a href="index.php" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+            <a href="index.php" class="flex flex-col items-center p-2 text-white hover:text-gray-200">
                 <i class="fas fa-home text-lg mb-1"></i>
                 <span class="text-xs">Home</span>
             </a>
-            <a href="course.php" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+            <a href="course.php" class="flex flex-col items-center p-2 text-white hover:text-gray-200">
                 <i class="fas fa-book text-lg mb-1"></i>
                 <span class="text-xs">Courses</span>
             </a>
             <?php if (isLoggedIn()): ?>
-                <a href="mycourses.php" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+                <a href="mycourses.php" class="flex flex-col items-center p-2 text-white hover:text-gray-200">
                     <i class="fas fa-graduation-cap text-lg mb-1"></i>
                     <span class="text-xs">My Courses</span>
                 </a>
             <?php endif; ?>
-            <a href="help.php" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+            <a href="help.php" class="flex flex-col items-center p-2 text-white hover:text-gray-200">
                 <i class="fas fa-question-circle text-lg mb-1"></i>
                 <span class="text-xs">Help</span>
             </a>
-            <a href="profile.php" class="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+            <a href="profile.php" class="flex flex-col items-center p-2 text-white hover:text-gray-200">
                 <i class="fas fa-user text-lg mb-1"></i>
                 <span class="text-xs">Profile</span>
             </a>

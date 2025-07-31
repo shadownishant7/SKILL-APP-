@@ -23,6 +23,7 @@ A fully functional mobile-first digital course selling web application built wit
 - **User Management**: View user details and purchases
 - **Order Management**: Track course purchases
 - **Payment Tracking**: Monitor payment status
+- **Settings Management**: Configure app settings
 
 ## 🛠️ Technologies Used
 
@@ -60,7 +61,10 @@ A fully functional mobile-first digital course selling web application built wit
 │   ├── signup.php          # User signup handler
 │   ├── create_order.php    # Payment order creation
 │   └── verify_payment.php  # Payment verification
-├── uploads/                # File uploads directory
+├── uploads/
+│   ├── banners/            # Banner images
+│   ├── courses/            # Course images
+│   └── videos/             # Video files
 ├── index.php               # Homepage
 ├── login.php               # User login page
 ├── course.php              # Course listing
@@ -108,17 +112,14 @@ A fully functional mobile-first digital course selling web application built wit
 4. **Configure Razorpay (Optional)**
    - Sign up for a Razorpay account
    - Get your API keys from the Razorpay dashboard
-   - Update the keys in `ajax/create_order.php` and `ajax/verify_payment.php`:
-     ```php
-     $razorpay_key_id = 'rzp_test_YOUR_KEY_ID';
-     $razorpay_key_secret = 'YOUR_SECRET_KEY';
-     ```
+   - Update the keys in admin settings panel
 
 5. **Set File Permissions**
    ```bash
    chmod 755 uploads/
+   chmod 755 uploads/banners/
+   chmod 755 uploads/courses/
    chmod 755 uploads/videos/
-   chmod 755 uploads/images/
    ```
 
 6. **Access the Application**
@@ -129,7 +130,7 @@ A fully functional mobile-first digital course selling web application built wit
 
 ### Admin Panel
 - **Username**: admin
-- **Password**: admin123
+- **Password**: 123456
 
 ## 🔧 Configuration
 
@@ -142,10 +143,12 @@ define('DB_PASS', 'your_password');
 define('DB_NAME', 'skillzup');
 ```
 
-### Razorpay Configuration
-For production, replace test keys with live keys in:
-- `ajax/create_order.php`
-- `ajax/verify_payment.php`
+### App Settings
+Configure app settings through the admin panel:
+- App Name
+- Razorpay Keys
+- Support Email
+- Support Phone
 
 ## 📱 Features Overview
 
@@ -180,10 +183,10 @@ For production, replace test keys with live keys in:
 
 ### Course Management
 - Create courses with titles, descriptions, and pricing
-- Upload course thumbnails
+- Upload course images
 - Organize content into chapters
 - Upload video files (MP4 format)
-- Set course categories
+- Set course pricing (MRP and selling price)
 
 ### Payment System
 - Integrated Razorpay payment gateway
@@ -216,7 +219,8 @@ For production, replace test keys with live keys in:
 
 For support and questions:
 - Email: support@skillswithnishant.com
-- Phone: +91 98765 43210
+- Documentation: Check README.md
+- Issues: Create GitHub issue
 
 ## 📄 License
 
